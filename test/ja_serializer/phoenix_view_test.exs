@@ -181,4 +181,36 @@ defmodule JaSerializer.PhoenixViewTest do
     assert error_output =~
              "warning: Please use errors.json-api instead. This will stop working in a future version.\n"
   end
+
+  describe "with nested changesets" do
+    test "render conn, 'errors.json-api', data: changeset" do
+      errors =
+        {%{}, %{title: :string}}
+        |> Ecto.Changeset.cast(%{}, [])
+        |> Ecto.Changeset.add_error(:title, "is invalid")
+
+      json = @view.render("errors.json-api", conn: %{}, data: errors)
+      assert Map.has_key?(json, "errors")
+      assert [e1] = json["errors"]
+      assert e1.source.pointer == "/data/attributes/title"
+      assert e1.detail == "Title is invalid"
+    end
+
+    # This should be deprecated in the future
+    test "render conn, 'errors.json', data: changeset" do
+      error_output =
+        capture_io(:stderr, fn ->
+          errors =
+            {%{}, %{title: :string}}
+            |> Ecto.Changeset.cast(%{}, [])
+            |> Ecto.Changeset.add_error(:title, "is invalid")
+
+          json = @view.render("errors.json", conn: %{}, data: errors)
+          assert Map.has_key?(json, "errors")
+        end)
+
+      assert error_output =~
+               "warning: Please use errors.json-api instead. This will stop working in a future version.\n"
+    end
+  end
 end
