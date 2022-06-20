@@ -3,6 +3,26 @@ defmodule JaSerializer.EctoErrorSerializerTest do
 
   alias JaSerializer.EctoErrorSerializer
 
+  test "Will correctly ignore options from error message when there are not formatable" do
+    expected = %{
+      "errors" => [
+        %{
+          detail: "Title is invalid for reason: %{reason}",
+          source: %{pointer: "/data/attributes/title"},
+          title: "is invalid for reason: %{reason}"
+        }
+      ],
+      "jsonapi" => %{"version" => "1.0"}
+    }
+
+    changeset =
+      {%{}, %{title: :string}}
+      |> Ecto.Changeset.cast(%{}, [])
+      |> Ecto.Changeset.add_error(:title, "is invalid for reason: %{reason}", reason: {})
+
+    assert expected == EctoErrorSerializer.format(changeset)
+  end
+
   test "Will correctly format a changeset with an error" do
     expected = %{
       "errors" => [
