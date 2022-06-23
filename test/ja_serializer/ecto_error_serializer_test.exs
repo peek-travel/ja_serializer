@@ -3,7 +3,7 @@ defmodule JaSerializer.EctoErrorSerializerTest do
 
   alias JaSerializer.EctoErrorSerializer
 
-  test "Will correctly ignore options from error message when there are not formatable" do
+  test "Will correctly ignore options from error message when they are not formattable" do
     expected = %{
       "errors" => [
         %{
