@@ -1,7 +1,7 @@
-if Code.ensure_loaded?(Phoenix) and Code.ensure_loaded?(Mix.Phoenix.Context) do
+if Code.ensure_loaded?(Mix.Phoenix.Context) do
   defmodule Mix.Tasks.JaSerializer.Gen.PhxApi do
     @shortdoc "Generates a controller and model for a JSON API based resource"
-    
+
     use Mix.Task
 
     alias Mix.Phoenix.Context
